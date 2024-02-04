@@ -40,7 +40,7 @@ def generate_token():
     )
 
 
-def embedding(sentence: str):
+def gle_embedding_v2(sentence: str):
     """
     glm embedding-v2 https://open.bigmodel.cn/dev/api#text_embedding
     """

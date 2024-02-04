@@ -1,26 +1,30 @@
 from typing import List
 
-from main import app
-from embedding import ernie, glm, huggingface
+from fastapi import APIRouter
+from pydantic import BaseModel
+
+from embedding import ernie_embedding_v1, gle_embedding_v2, huggingface_embedding
+
+router = APIRouter()
 
 
-class EmbeddingApiRequest:
+class EmbeddingApiRequest(BaseModel):
     contents: List[str] = []
-    content: str
-    model: str
+    content: str = ""
+    model: str = ""
     auto_truncate: bool = True
 
 
-@app.post("/api/ernie/embedding")
-def ernie_embedding(req: EmbeddingApiRequest):
-    ernie.ernie_embedding_v1(req.contents)
+@router.post("/api/ernie/embedding")
+def ernie_api(req: EmbeddingApiRequest):
+    return ernie_embedding_v1(req.contents)
 
 
-@app.post("/api/glm/embedding")
-def glm_embedding(req: EmbeddingApiRequest):
-    return glm.embedding(req.content)
+@router.post("/api/glm/embedding")
+def glm_api(req: EmbeddingApiRequest):
+    return gle_embedding_v2(req.content)
 
 
-@app.post("/api/huggingface/embedding")
-def huggingface_embedding(req: EmbeddingApiRequest):
-    huggingface.huggingface_embedding(req.model, req.contents, req.auto_truncate)
+@router.post("/api/huggingface/embedding")
+def huggingface_api(req: EmbeddingApiRequest):
+    return huggingface_embedding(req.model, req.contents, req.auto_truncate)
